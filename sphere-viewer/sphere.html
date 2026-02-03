@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>3D Sphere Viewer</title>
+  <style>
+    body {
+      margin: 0;
+      display: flex;
+    }
+
+    #canvas-container {
+      width: 75vw;
+      height: 100vh;
+    }
+
+    #controls {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding-left: 20px;
+    }
+
+    input[type="range"],
+    input[type="text"] {
+      margin: 10px 0;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="canvas-container"></div>
+  <div id="controls">
+    <label>Rotate XY: <input type="range" id="rotateXY" min="0" max="360" value="0"></label>
+    <input type="text" id="valueXY" value="0">
+
+    <label>Rotate YZ: <input type="range" id="rotateYZ" min="0" max="360" value="0"></label>
+    <input type="text" id="valueYZ" value="0">
+
+    <label>Rotate XZ: <input type="range" id="rotateXZ" min="0" max="360" value="0"></label>
+    <input type="text" id="valueXZ" value="0">
+
+    <label>Zoom: <input type="range" id="zoom" min="0" max="50" value="25"></label>
+    <input type="text" id="valueZoom" value="25">
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="sphere.js"></script>
+</body>
+
+</html>
