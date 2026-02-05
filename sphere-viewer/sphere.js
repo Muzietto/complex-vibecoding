@@ -14,7 +14,7 @@ function init() {
   document.getElementById('canvas-container').appendChild(renderer.domElement);
 
   // Create a wireframe sphere
-  const geometry = new THREE.SphereGeometry(1, 12, 12); // used to be 32
+  const geometry = new THREE.SphereGeometry(1, 32, 32); // used to be 32
   const material = new THREE.MeshPhongMaterial({ color: 0xffffff, wireframe: true });
   sphere = new THREE.Mesh(geometry, material);
   scene.add(sphere);
@@ -120,6 +120,29 @@ function drawAxes() {
   scene.add(xAxis);
   scene.add(yAxis);
   scene.add(zAxis);
+
+  const pointGeometry = new THREE.SphereGeometry(0.03, 8, 8); // Small sphere for the point
+  const pointMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff }); // White material
+  const point = new THREE.Mesh(pointGeometry, pointMaterial); // Create the point
+
+  // Set the position of the point to (1, 1, 1)
+  point.position.set(1, 1, 1);
+
+  // Add the point to the scene
+  scene.add(point);
+
+  const pointX = new THREE.Mesh(pointGeometry, new THREE.MeshBasicMaterial({ color: 0xff0000 }));
+  pointX.position.set(1.5, 0, 0);
+  scene.add(pointX);
+
+  const pointY = new THREE.Mesh(pointGeometry, new THREE.MeshBasicMaterial({ color: 0x00ff00 }));
+  pointY.position.set(0, 1.5, 0);
+  scene.add(pointY);
+
+  const pointZ = new THREE.Mesh(pointGeometry, new THREE.MeshBasicMaterial({ color: 0x0000ff }));
+  pointZ.position.set(0, 0, 1.5);
+  scene.add(pointZ);
+
 }
 
 function onWindowResize() {
@@ -129,6 +152,35 @@ function onWindowResize() {
 }
 
 function updateView() {
+  const rotateXY = THREE.MathUtils.degToRad(document.getElementById('rotateXY').value);
+  const rotateYZ = THREE.MathUtils.degToRad(document.getElementById('rotateYZ').value);
+  const rotateXZ = THREE.MathUtils.degToRad(document.getElementById('rotateXZ').value);
+
+  // Rotate the axes based on the cursor angles
+  // Keep Z (blue) axis fixed, rotate X (red) and Y (green)
+  //const xRotation = rotateXY; // Rotation around Z affects X, Y axes
+  //const yRotation = rotateYZ; // Rotation around X keeps X-axis fixed
+  const zRotation = rotateXY; // Rotation around Y affects X, Z axes
+
+  // Update camera position based on combined rotations
+  // camera.position.x = 5 * Math.cos(yRotation) * Math.cos(xRotation);
+  // camera.position.y = 5 * Math.sin(xRotation);
+  // camera.position.z = 5 * Math.sin(yRotation) * Math.cos(xRotation);
+
+
+  // Update camera position based on the new logic
+  camera.position.x = 5 * Math.cos(zRotation); // Keep X fixed
+  camera.position.y = 5 * Math.sin(zRotation); // Rotate Y-axis
+  camera.position.z = 5 //* Math.cos(yRotation); // Rotate Z-axis
+  camera.lookAt(sphere.position);
+
+  // Update text inputs
+  document.getElementById('valueXY').value = document.getElementById('rotateXY').value;
+  document.getElementById('valueYZ').value = document.getElementById('rotateYZ').value;
+  document.getElementById('valueXZ').value = document.getElementById('rotateXZ').value;
+}
+
+function updateView_ref() {
   const rotateXY = THREE.MathUtils.degToRad(document.getElementById('rotateXY').value);
   const rotateYZ = THREE.MathUtils.degToRad(document.getElementById('rotateYZ').value);
   const rotateXZ = THREE.MathUtils.degToRad(document.getElementById('rotateXZ').value);
@@ -146,7 +198,9 @@ function updateView() {
 
 function updateZoom() {
   const zoomValue = parseFloat(document.getElementById('zoom').value);
-  camera.position.z = 5 - zoomValue;
+  camera.position.x = zoomValue;
+  camera.position.y = zoomValue;
+  camera.position.z = zoomValue;
   document.getElementById('valueZoom').value = zoomValue;
 }
 
