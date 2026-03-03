@@ -14,11 +14,9 @@ camera = new THREE.PerspectiveCamera(
 camera.position.z = 2;
 scene = new THREE.Scene();
 
-/*
 const controls = new THREE.OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 controls.dampingFactor = 0.03;
-*/
 
 const geo = new THREE.IcosahedronGeometry(1.0, 2);
 const mat = new THREE.MeshStandardMaterial({
@@ -36,8 +34,9 @@ animate();
 function animate(t = 0) {
   console.log(t);
   requestAnimationFrame(animate);
-  mesh.rotation.y = t * 0.0001;
+  // mesh.rotation.y = t * 0.0001;
   renderer.render(scene, camera);
+  controls.update();
 }
 
 
