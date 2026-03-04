@@ -5,13 +5,25 @@ function init() {
   scene = new THREE.Scene();
 
   // Create the camera
-  camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+  camera = new THREE.PerspectiveCamera(
+    75, // fov
+    window.innerWidth / window.innerHeight, // aspect
+    0.1, // near
+    1000 // far
+  );
   camera.position.z = 5;
+  camera.position.x = 5;
+  camera.position.y = 5;
 
   // Create the renderer
-  renderer = new THREE.WebGLRenderer();
-  renderer.setSize(window.innerWidth * 0.75, window.innerHeight);
+  renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.setSize(window.innerWidth, window.innerHeight);
   document.getElementById('canvas-container').appendChild(renderer.domElement);
+
+  // Create the mouse control
+  const controls = new THREE.OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.03;
 
   // Create a wireframe sphere
   const geometry = new THREE.SphereGeometry(1, 32, 32); // used to be 32
@@ -74,18 +86,6 @@ function init() {
   // Handle window resize
   window.addEventListener('resize', onWindowResize, false);
 
-  // Set up control listeners
-  document.getElementById('rotateXY').addEventListener('input', updateView);
-  document.getElementById('rotateYZ').addEventListener('input', updateView);
-  document.getElementById('rotateXZ').addEventListener('input', updateView);
-  document.getElementById('zoom').addEventListener('input', updateZoom);
-
-  // Set up text input listeners
-  document.getElementById('valueXY').addEventListener('input', updateRangeFromText('rotateXY', 'valueXY'));
-  document.getElementById('valueYZ').addEventListener('input', updateRangeFromText('rotateYZ', 'valueYZ'));
-  document.getElementById('valueXZ').addEventListener('input', updateRangeFromText('rotateXZ', 'valueXZ'));
-  document.getElementById('valueZoom').addEventListener('input', updateRangeFromText('zoom', 'valueZoom'));
-
   animate();
   updateView();
   onWindowResize();
@@ -146,80 +146,24 @@ function drawAxes() {
 }
 
 function onWindowResize() {
-  renderer.setSize(window.innerWidth * 0.75, window.innerHeight);
-  camera.aspect = (window.innerWidth * 0.75) / window.innerHeight;
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  camera.aspect = (window.innerWidth) / window.innerHeight;
   camera.updateProjectionMatrix();
 }
 
-function updateView() {
-  const rotateXY = THREE.MathUtils.degToRad(document.getElementById('rotateXY').value);
-  const rotateYZ = THREE.MathUtils.degToRad(document.getElementById('rotateYZ').value);
-  const rotateXZ = THREE.MathUtils.degToRad(document.getElementById('rotateXZ').value);
-
-  // Rotate the axes based on the cursor angles
-  // Keep Z (blue) axis fixed, rotate X (red) and Y (green)
-  //const xRotation = rotateXY; // Rotation around Z affects X, Y axes
-  //const yRotation = rotateYZ; // Rotation around X keeps X-axis fixed
-  const zRotation = rotateXY; // Rotation around Y affects X, Z axes
-
-  // Update camera position based on combined rotations
-  // camera.position.x = 5 * Math.cos(yRotation) * Math.cos(xRotation);
-  // camera.position.y = 5 * Math.sin(xRotation);
-  // camera.position.z = 5 * Math.sin(yRotation) * Math.cos(xRotation);
-
-
-  // Update camera position based on the new logic
-  camera.position.x = 5 * Math.cos(zRotation); // Keep X fixed
-  camera.position.y = 5 * Math.sin(zRotation); // Rotate Y-axis
-  camera.position.z = 5 //* Math.cos(yRotation); // Rotate Z-axis
-  camera.lookAt(sphere.position);
-
-  // Update text inputs
-  document.getElementById('valueXY').value = document.getElementById('rotateXY').value;
-  document.getElementById('valueYZ').value = document.getElementById('rotateYZ').value;
-  document.getElementById('valueXZ').value = document.getElementById('rotateXZ').value;
+function animate(t = 0) {
+  console.log(t);
+  requestAnimationFrame(animate);
+  // mesh.rotation.y = t * 0.0001;
+  renderer.render(scene, camera);
+  controls.update();
 }
 
-function updateView_ref() {
-  const rotateXY = THREE.MathUtils.degToRad(document.getElementById('rotateXY').value);
-  const rotateYZ = THREE.MathUtils.degToRad(document.getElementById('rotateYZ').value);
-  const rotateXZ = THREE.MathUtils.degToRad(document.getElementById('rotateXZ').value);
-
-  camera.position.x = 5 * Math.cos(rotateYZ) * Math.cos(rotateXY);
-  camera.position.y = 5 * Math.sin(rotateXZ);
-  camera.position.z = 5 * Math.sin(rotateYZ) * Math.cos(rotateXY);
-  camera.lookAt(sphere.position);
-
-  // Update text inputs
-  document.getElementById('valueXY').value = document.getElementById('rotateXY').value;
-  document.getElementById('valueYZ').value = document.getElementById('rotateYZ').value;
-  document.getElementById('valueXZ').value = document.getElementById('rotateXZ').value;
-}
-
-function updateZoom() {
-  const zoomValue = parseFloat(document.getElementById('zoom').value);
-  camera.position.x = zoomValue;
-  camera.position.y = zoomValue;
-  camera.position.z = zoomValue;
-  document.getElementById('valueZoom').value = zoomValue;
-}
-
-function updateRangeFromText(rangeId, textId) {
-  return function () {
-    const value = document.getElementById(textId).value;
-    const rangeInput = document.getElementById(rangeId);
-    const parsedValue = parseFloat(value);
-
-    if (!isNaN(parsedValue) && parsedValue >= rangeInput.min && parsedValue <= rangeInput.max) {
-      rangeInput.value = parsedValue;
-      updateView();
-    }
-  };
-}
-
+/*
 function animate() {
   requestAnimationFrame(animate);
   renderer.render(scene, camera);
 }
+*/
 
 init();
