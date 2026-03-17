@@ -114,7 +114,7 @@ function drawAxes() {
   const materialP = new THREE.MeshPhongMaterial({
     color: 0x0077ff,
     shininess: 30,
-    shading: THREE.FlatShading
+    flatShading: true,
   });
   const surfaceMeshP = new THREE.Mesh(geometry, materialP);
 
