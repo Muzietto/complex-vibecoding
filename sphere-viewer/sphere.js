@@ -1,4 +1,4 @@
-let scene, camera, renderer, sphere;
+let scene, camera, renderer, sphere, controls;
 
 function init() {
   // Create the scene
@@ -21,7 +21,7 @@ function init() {
   document.getElementById('canvas-container').appendChild(renderer.domElement);
 
   // Create the mouse control
-  const controls = new THREE.OrbitControls(camera, renderer.domElement);
+  controls = new THREE.OrbitControls(camera, renderer.domElement);
   controls.enableDamping = true;
   controls.dampingFactor = 0.03;
 
@@ -87,7 +87,6 @@ function init() {
   window.addEventListener('resize', onWindowResize, false);
 
   animate();
-  updateView();
   onWindowResize();
 }
 
