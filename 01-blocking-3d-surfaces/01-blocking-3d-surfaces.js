@@ -72,11 +72,6 @@ function drawAxes() {
 
   ////////////////////////////////////////
 
-  const geometryC = new THREE.BoxGeometry(2, 2, 2);
-  const materialC = new THREE.MeshPhongMaterial({ color: 0xff0000, shininess: 100 });
-  const cube = new THREE.Mesh(geometryC, materialC);
-  scene.add(cube);
-
   // Create a BufferGeometry for the surface
   const geometry = new THREE.BufferGeometry();
 
@@ -116,7 +111,11 @@ function drawAxes() {
   geometry.setIndex(indices);
 
   // Create a mesh with Phong material
-  const materialP = new THREE.MeshPhongMaterial({ color: 0x0077ff, shininess: 100 });
+  const materialP = new THREE.MeshPhongMaterial({
+    color: 0x0077ff,
+    shininess: 30,
+    shading: THREE.FlatShading
+  });
   const surfaceMeshP = new THREE.Mesh(geometry, materialP);
 
   // Add the surface to the scene
